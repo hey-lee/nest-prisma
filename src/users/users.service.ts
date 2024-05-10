@@ -1,5 +1,5 @@
-import { User, Prisma } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
+import { User, Prisma } from '@prisma/client'
 import { PrismaService } from 'prisma/prisma.service'
 
 @Injectable()
@@ -29,10 +29,13 @@ export class UsersService {
     })
   }
 
-  async findUnique(username: string) {
-    return this.prisma.user.findUnique({
+  async findFirst(username: string) {
+    return this.prisma.user.findFirst({
       where: {
         username,
+      },
+      include: {
+        roles: true,
       },
     })
   }

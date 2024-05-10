@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { User, Prisma } from '@prisma/client'
 import { PrismaService } from 'prisma/prisma.service'
+import { hashSync } from 'bcryptjs'
 
 @Injectable()
 export class UsersService {
@@ -36,6 +37,24 @@ export class UsersService {
       },
       include: {
         roles: true,
+      },
+    })
+  }
+
+  async update(id: number, data: Prisma.UserUpdateInput) {
+    data.password = hashSync(data.password, 10)
+    return this.prisma.user.update({
+      where: {
+        id: Number(id),
+      },
+      data,
+    })
+  }
+
+  async delete(id: number) {
+    return this.prisma.user.delete({
+      where: {
+        id: Number(id),
       },
     })
   }

@@ -3,8 +3,7 @@ import {
   UseGuards,
   Get,
   Post,
-  Body,
-  Patch,
+  Put,
   Param,
   Query,
   Delete,
@@ -26,5 +25,15 @@ export class UsersController {
   @Get()
   findAll() {
     return this.usersService.users()
+  }
+
+  @Put(`:id`)
+  update(@Param('id') id: string, @Query() input: Prisma.UserUpdateInput) {
+    return this.usersService.update(Number(id), input)
+  }
+
+  @Delete(`:id`)
+  delete(@Param('id') id: string) {
+    return this.usersService.delete(Number(id))
   }
 }

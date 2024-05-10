@@ -1,3 +1,4 @@
+import { getParams } from 'fns'
 import { Request } from 'express'
 import { JWT_SECRET } from 'auth/constants'
 import { JwtService } from '@nestjs/jwt'
@@ -14,10 +15,12 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
-    const token = this.extractTokenFromHeader(request)
+    const token = this.getToken(request)
+
     if (!token) {
       throw new UnauthorizedException()
     }
+
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: JWT_SECRET,
@@ -28,11 +31,20 @@ export class AuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException()
     }
+
     return true
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? []
-    return type === 'Bearer' ? token : undefined
+  private getToken(request: Request): string | null {
+    return this.tokenFromURL(request) || this.tokenFromHeader(request)
+  }
+
+  private tokenFromURL(request: Request): string | null {
+    return getParams(request.url).get(`token`)
+  }
+
+  private tokenFromHeader(request: Request): string | null {
+    const [type, token] = request.headers.authorization?.split(` `) ?? []
+    return type === `Bearer` ? token : null
   }
 }

@@ -23,6 +23,30 @@ model User {
   email     String?
   username  String   @unique
   password  String
-  createAt  DateTime @default(now())
+  roles     Role[]
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  key         String       @unique
+  name        String       @default("")
+  description String       @default("")
+  permissions Permission[]
+  userID      Int?
+  User        User?        @relation(fields: [userID], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  name        String   @default("")
+  description String   @default("")
+  roleID      Int?
+  Role        Role?    @relation(fields: [roleID], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

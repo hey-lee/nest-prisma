@@ -11,13 +11,16 @@ export class AuthService {
   ) {}
 
   async signIn(username: string, password: string): Promise<{ token: string }> {
-    const user = await this.usersService.findUnique(username)
+    const user = await this.usersService.findFirst(username)
     if (!compareSync(password, user?.password)) {
       throw new UnauthorizedException()
     }
-    const payload = { sub: user.id, username: user.username }
+    const { password: _, createdAt, updatedAt, ...payload } = user
     return {
-      token: await this.jwtService.signAsync(payload),
+      token: await this.jwtService.signAsync({
+        ...payload,
+        roles: user.roles.map(({ key }) => key),
+      }),
     }
   }
 

@@ -7,8 +7,7 @@ export const getParams = (path: string = ``) => {
 
 export const matchPermissions = (
   permissions: string[],
-  roles: { permissions: string[] }[] = [],
+  userPermissions: string[],
 ): boolean => {
-  const flatten = roles.map(({ permissions }) => permissions).flat()
-  return permissions.some((permission) => flatten.includes(permission))
+  return permissions.some((permission) => userPermissions.includes(permission))
 }

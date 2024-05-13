@@ -33,9 +33,8 @@ model Role {
   key         String       @unique
   name        String       @default("")
   description String       @default("")
+  users       User[]
   permissions Permission[]
-  userID      Int?
-  User        User?        @relation(fields: [userID], references: [id])
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -45,8 +44,7 @@ model Permission {
   key         String   @unique
   name        String   @default("")
   description String   @default("")
-  roleID      Int?
-  Role        Role?    @relation(fields: [roleID], references: [id])
+  roles       Role[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

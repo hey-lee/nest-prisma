@@ -28,7 +28,10 @@ export class RolesController {
   }
 
   @Put(`:id`)
-  update(@Param(`id`) id: string, @Query() input: Prisma.RoleUpdateInput) {
+  update(
+    @Param(`id`) id: string,
+    @Query() input: Prisma.RoleUpdateInput & { permissionIDs: string },
+  ) {
     return this.rolesService.update(Number(id), input)
   }
 

@@ -29,7 +29,18 @@ export class RolesService {
     })
   }
 
-  async update(id: number, data: Prisma.RoleUpdateInput) {
+  async update(
+    id: number,
+    {
+      permissionIDs,
+      ...data
+    }: Prisma.RoleUpdateInput & { permissionIDs: string },
+  ) {
+    data.permissions = {}
+    data.permissions.connect = permissionIDs
+      .split(`,`)
+      .map((id) => ({ id: Number(id) }))
+
     return this.prisma.role.update({
       where: {
         id: Number(id),

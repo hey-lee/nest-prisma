@@ -30,13 +30,27 @@ export class UsersService {
     })
   }
 
-  async findFirst(username: string) {
+  async findFirst(where: Prisma.UserWhereInput = {}) {
     return this.prisma.user.findFirst({
-      where: {
-        username,
-      },
-      include: {
-        roles: true,
+      where,
+      select: {
+        email: true,
+        username: true,
+        password: true,
+        roles: {
+          select: {
+            key: true,
+            name: true,
+            description: true,
+            permissions: {
+              select: {
+                key: true,
+                name: true,
+                description: true,
+              },
+            },
+          },
+        },
       },
     })
   }

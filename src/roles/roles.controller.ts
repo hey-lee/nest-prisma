@@ -13,7 +13,7 @@ import { Prisma } from '@prisma/client'
 import { RolesService } from 'roles/roles.service'
 
 @UseGuards(AuthGuard)
-@Controller('roles')
+@Controller(`roles`)
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
@@ -28,13 +28,12 @@ export class RolesController {
   }
 
   @Put(`:id`)
-  update(@Param('id') id: string, @Query() input: Prisma.RoleUpdateInput) {
-    console.log(id, input)
+  update(@Param(`id`) id: string, @Query() input: Prisma.RoleUpdateInput) {
     return this.rolesService.update(Number(id), input)
   }
 
   @Delete(`:id`)
-  delete(@Param('id') id: string) {
+  delete(@Param(`id`) id: string) {
     return this.rolesService.delete(Number(id))
   }
 }

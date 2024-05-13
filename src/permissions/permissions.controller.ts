@@ -20,9 +20,6 @@ export class PermissionsController {
 
   @Post()
   create(@Query() input: Prisma.PermissionCreateInput) {
-    console.log(input)
-    // @ts-ignore
-    input.roleID = Number(input.roleID)
     return this.pmsService.create(input)
   }
 

@@ -9,10 +9,12 @@ import {
   Delete,
 } from '@nestjs/common'
 import { AuthGuard } from 'auth/auth.guard'
+import { Permissions } from 'auth/permissions.decorator'
+import { PermissionsGuard } from 'auth/permissions.guard'
 import { Prisma } from '@prisma/client'
 import { UsersService } from 'users/users.service'
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, PermissionsGuard)
 @Controller(`users`)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -27,13 +29,22 @@ export class UsersController {
     return this.usersService.users()
   }
 
+  @Get(`:id`)
+  findFirst(@Param(`id`) id: string) {
+    return this.usersService.findFirst({ id: Number(id) })
+  }
+
   @Put(`:id`)
-  update(@Param('id') id: string, @Query() input: Prisma.UserUpdateInput) {
+  update(
+    @Param(`id`) id: string,
+    @Query() input: Prisma.UserUpdateInput & { roleIDs: string },
+  ) {
     return this.usersService.update(Number(id), input)
   }
 
   @Delete(`:id`)
-  delete(@Param('id') id: string) {
+  @Permissions([`user.delete`])
+  delete(@Param(`id`) id: string) {
     return this.usersService.delete(Number(id))
   }
 }

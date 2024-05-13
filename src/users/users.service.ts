@@ -55,8 +55,13 @@ export class UsersService {
     })
   }
 
-  async update(id: number, data: Prisma.UserUpdateInput) {
+  async update(
+    id: number,
+    { roleIDs, ...data }: Prisma.UserUpdateInput & { roleIDs: string },
+  ) {
     data.password = hashSync(data.password, 10)
+    data.roles = {}
+    data.roles.connect = roleIDs.split(`,`).map((id) => ({ id: Number(id) }))
     return this.prisma.user.update({
       where: {
         id: Number(id),
